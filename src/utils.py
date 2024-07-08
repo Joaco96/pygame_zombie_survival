@@ -35,7 +35,6 @@ def calcular_direccion(origen:tuple[int,int],target:tuple[int,int],speed:int = 1
 
 def calcular_direccion_angulo(angulo):
     radianes = math.radians(angulo)
-    print(radianes)
     return (math.cos(radianes), math.sin(radianes))
 
 def generate_random_position(settings) -> tuple[int,int]:

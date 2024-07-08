@@ -34,17 +34,8 @@ def game_over(SCREEN,FONT,scores,settings,score):
                     except FileNotFoundError:
                         print("Archivo de scores no encontrado")
                         terminar()
-                    
-                    # importo puntajes desde json
-                    try:
-                        json = importar_json('src/leaderboard.json')
-                    except FileNotFoundError:
-                        print("Archivo de scores no encontrado")
-                        terminar()
-                    new_scores = sorted_map(lambda a,b: a[1] < b[1],json["scores"])
-
                     from leaderboard import leaderboard
-                    leaderboard(SCREEN,FONT,settings,new_scores,current_score)
+                    leaderboard(SCREEN,FONT,settings,current_score)
 
         # dibujar pantalla
         SCREEN.fill(settings["BLACK"])

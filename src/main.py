@@ -62,7 +62,7 @@ def main():
                 controls(SCREEN,FONT,settings)
             elif event.type == pygame.KEYDOWN and event.key == pygame.K_l:
                 from leaderboard import leaderboard
-                leaderboard(SCREEN,FONT,settings,scores)
+                leaderboard(SCREEN,FONT,settings)
 
         SCREEN.fill(settings["BLUE"])
 

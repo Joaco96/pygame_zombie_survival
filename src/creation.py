@@ -29,9 +29,7 @@ def create_bullet(settings,origen:tuple[int,int], target:tuple[int,int],imagen:p
     return bullet
 
 def create_vault_bullet(settings,origen:tuple[int,int], target:tuple[int,int],imagen:pygame.Surface = None):
-    print(target)
     angulo = math.degrees(math.atan2(target[1] - origen[1], target[0] - origen[0]))
-    print(angulo)
     dir_izq = calcular_direccion_angulo(angulo - 15)
     dir_der = calcular_direccion_angulo(angulo + 15)
     return (create_bullet(settings,origen,target,imagen),
