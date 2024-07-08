@@ -20,11 +20,9 @@ def controls(SCREEN,FONT,settings):
                 main()
 
         SCREEN.fill(settings["BLACK"])
-        controls_text = FONT.render('Controls', True, (255, 0, 0))
-        prompt_text = FONT.render('Press Enter', True, settings["WHITE"])
-
-        SCREEN.blit(controls_text, (SCREEN.get_width() // 2 - controls_text.get_width() // 2, 200))        
-        SCREEN.blit(prompt_text, (SCREEN.get_width() // 2 - prompt_text.get_width() // 2, 400))
+        show_text(SCREEN,(settings["WIDTH"]//2,100),"Controls",FONT,settings["RED"])
+        show_text(SCREEN,(settings["WIDTH"]//2,500),"Press ENTER for Main Menu",FONT,settings["WHITE"])
+        
         # actualizar pantalla
         pygame.display.flip()
     
