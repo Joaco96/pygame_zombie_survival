@@ -16,6 +16,7 @@ def leaderboard(SCREEN,TITLE_FONT,FONT,settings,current_score=None):
     except FileNotFoundError:
         print("Archivo de scores no encontrado")
         terminar()
+
     if len(json["scores"]) > 1:
         scores = sorted_map(lambda a,b: a[1] < b[1],json["scores"])
     else: scores = json["scores"]
@@ -35,7 +36,7 @@ def leaderboard(SCREEN,TITLE_FONT,FONT,settings,current_score=None):
         if current_score != None:
             show_text(SCREEN,(settings["WIDTH"]//2,100),f"Recent score {current_score[0]} - {current_score[1]}",FONT,settings["YELLOW"])
 
-        # armar leaderboard
+        # mostrar leaderboard
         altura = 240
         for i in range(5):
             try:

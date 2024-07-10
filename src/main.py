@@ -9,6 +9,7 @@ from game import *
 # inicializo modulos de pygame
 pygame.init()
 
+# importo configuracion desde json
 try:
     json = importar_json('src/settings.json')
 except FileNotFoundError:
