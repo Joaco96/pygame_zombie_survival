@@ -33,11 +33,11 @@ def calcular_direccion(origen:tuple[int,int],target:tuple[int,int],speed:int = 1
     dist_y = dist_y / dist * speed
     return(dist_x,dist_y)
 
-def calcular_direccion_angulo(angulo):
+def calcular_direccion_angulo(angulo:float):
     radianes = math.radians(angulo)
     return (math.cos(radianes), math.sin(radianes))
 
-def generate_random_position(settings) -> tuple[int,int]:
+def generate_random_position(settings:dict) -> tuple[int,int]:
     # elijo un borde al azar
     edge = randint(0, 3)
     if edge == 0:  # Izquierda
@@ -71,3 +71,8 @@ def wait_user(tecla: int) -> None:
 def terminar():
     pygame.quit()
     exit()
+
+def rotar_pos(bloque:dict,pos:tuple) -> pygame.Surface:
+    angulo = math.degrees(math.atan2(pos[1] - bloque["rect"][1], pos[0] - bloque["rect"][0]))
+    imagen_rotada = pygame.transform.rotate(bloque["img"],-angulo)
+    return imagen_rotada

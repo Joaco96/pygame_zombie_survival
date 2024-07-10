@@ -3,9 +3,10 @@ from main import *
 from pygame.locals import *
 import sys
 
-def controls(SCREEN,FONT,settings):
+def controls(SCREEN,TITLE_FONT,FONT,settings):
     is_running = True
     clock = pygame.time.Clock()
+    imagen_fondo = pygame.transform.scale(pygame.image.load(settings["CONTROLS_IMAGE"]), settings["SIZE_SCREEN"])
 
     # bucle de juego
     while is_running:
@@ -19,12 +20,12 @@ def controls(SCREEN,FONT,settings):
                 from main import main
                 main()
 
-        SCREEN.fill(settings["BLACK"])
-        show_text(SCREEN,(settings["WIDTH"]//2,100),"Controls",FONT,settings["RED"])
-        show_text(SCREEN,(settings["WIDTH"]//2,180),"[A] [W] [S] [D] -> Movimiento personaje",FONT,settings["YELLOW"])
-        show_text(SCREEN,(settings["WIDTH"]//2,230),"Click IZQ Mouse -> Disparo",FONT,settings["YELLOW"])
-        show_text(SCREEN,(settings["WIDTH"]//2,280),"[P] -> Pausa",FONT,settings["YELLOW"])
-        show_text(SCREEN,(settings["WIDTH"]//2,330),"[M] -> Mute",FONT,settings["YELLOW"])
+        SCREEN.blit(imagen_fondo,settings["ORIGIN"])
+        show_text(SCREEN,(settings["WIDTH"]//2,100),"Controls",TITLE_FONT,settings["RED"])
+        show_text(SCREEN,(settings["WIDTH"]//2,220),"IAI IWI ISI IDI - Movimiento personaje",FONT,settings["YELLOW"])
+        show_text(SCREEN,(settings["WIDTH"]//2,270),"Click IZQ Mouse - Disparo",FONT,settings["YELLOW"])
+        show_text(SCREEN,(settings["WIDTH"]//2,320),"IPI - Pausa",FONT,settings["YELLOW"])
+        show_text(SCREEN,(settings["WIDTH"]//2,370),"IMI - Mute",FONT,settings["YELLOW"])
         show_text(SCREEN,(settings["WIDTH"]//2,500),"Press ENTER for Main Menu",FONT,settings["WHITE"])
         
         # actualizar pantalla

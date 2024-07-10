@@ -7,10 +7,11 @@ from utils import *
 from creation import *
 from read_json import *
 
-def game_over(SCREEN,FONT,scores,settings,score):
+def game_over(SCREEN,TITLE_FONT,FONT,scores,settings,score):
     is_running = True
     clock = pygame.time.Clock()
     nombre = []
+    imagen_fondo = pygame.transform.scale(pygame.image.load(settings["LEADERBOARD_IMAGE"]), settings["SIZE_SCREEN"])
 
     # bucle de pantalla
     while is_running:
@@ -35,14 +36,14 @@ def game_over(SCREEN,FONT,scores,settings,score):
                         print("Archivo de scores no encontrado")
                         terminar()
                     from leaderboard import leaderboard
-                    leaderboard(SCREEN,FONT,settings,current_score)
+                    leaderboard(SCREEN,TITLE_FONT,FONT,settings,current_score)
 
         # dibujar pantalla
-        SCREEN.fill(settings["BLACK"])
-        show_text(SCREEN,(settings["WIDTH"]//2,100),"Game Over",FONT,settings["RED"])
-        show_text(SCREEN,(settings["WIDTH"]//2,180),"Enter your name:",FONT,settings["WHITE"])
-        show_text(SCREEN,(settings["WIDTH"]//2,225),"".join(nombre),FONT,settings["YELLOW"])
-        show_text(SCREEN,(settings["WIDTH"]//2,280),f'Score: {score}',FONT,settings["WHITE"])
+        SCREEN.blit(imagen_fondo,settings["ORIGIN"])
+        show_text(SCREEN,(settings["WIDTH"]//2,100),"Game Over",TITLE_FONT,settings["RED"])
+        show_text(SCREEN,(settings["WIDTH"]//2,225),"Enter your name",FONT,settings["WHITE"])
+        show_text(SCREEN,(settings["WIDTH"]//2,280),"".join(nombre),FONT,settings["YELLOW"])
+        show_text(SCREEN,(settings["WIDTH"]//2,345),f'Score {score}',FONT,settings["WHITE"])
 
         # actualizar pantalla
         pygame.display.flip()

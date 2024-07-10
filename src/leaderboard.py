@@ -5,9 +5,10 @@ from creation import *
 import sys
 from read_json import *
 
-def leaderboard(SCREEN,FONT,settings,current_score=None):
+def leaderboard(SCREEN,TITLE_FONT,FONT,settings,current_score=None):
     is_running = True
     clock = pygame.time.Clock()
+    imagen_fondo = pygame.transform.scale(pygame.image.load(settings["LEADERBOARD_IMAGE"]), settings["SIZE_SCREEN"])
     
     # importo puntajes desde json
     try:
@@ -15,11 +16,10 @@ def leaderboard(SCREEN,FONT,settings,current_score=None):
     except FileNotFoundError:
         print("Archivo de scores no encontrado")
         terminar()
-    print(len(json["scores"]))
     if len(json["scores"]) > 1:
         scores = sorted_map(lambda a,b: a[1] < b[1],json["scores"])
     else: scores = json["scores"]
-
+    
     # bucle de juego
     while is_running:
         clock.tick(settings["FPS"])
@@ -31,8 +31,10 @@ def leaderboard(SCREEN,FONT,settings,current_score=None):
                 from main import main
                 main()
 
-        SCREEN.fill(settings["BLACK"])
-        
+        SCREEN.blit(imagen_fondo,settings["ORIGIN"])
+        if current_score != None:
+            show_text(SCREEN,(settings["WIDTH"]//2,100),f"Recent score {current_score[0]} - {current_score[1]}",FONT,settings["YELLOW"])
+
         # armar leaderboard
         altura = 240
         for i in range(5):
@@ -42,9 +44,7 @@ def leaderboard(SCREEN,FONT,settings,current_score=None):
                 show_text(SCREEN,(settings["WIDTH"]//2,altura) ,f'***    -     0', FONT, settings["GREEN"])      
             altura += 40
 
-        if current_score != None:
-            show_text(SCREEN,(settings["WIDTH"]//2,100),f"Recent score: {current_score[0]} - {current_score[1]}",FONT,settings["YELLOW"])
-        show_text(SCREEN,(settings["WIDTH"]//2,200),f"Leaderboard",FONT,settings["RED"])       
+        show_text(SCREEN,(settings["WIDTH"]//2,180),f"Leaderboard",TITLE_FONT,settings["RED"])       
         show_text(SCREEN,(settings["WIDTH"]//2,500),f"Press ENTER",FONT,settings["WHITE"])    
 
         # actualizar pantalla

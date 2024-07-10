@@ -5,21 +5,34 @@ from collissions import *
 from pygame.locals import *
 from game_over import *
 
-def game(SCREEN,FONT,settings,scores):
+def game(SCREEN,TITLE_FONT,FONT,settings,scores):
+    # cargo imagenes
+    imagen_player = pygame.transform.scale(pygame.image.load(settings["PLAYER_IMAGE"]),(settings["PLAYER_WIDTH"],settings["PLAYER_HEIGHT"]))
+    imagen_zombie = pygame.transform.scale(pygame.image.load(settings["ZOMBIE_IMAGE"]),(settings["ZOMBIE_WIDTH"],settings["ZOMBIE_HEIGHT"]))
+    imagen_bullet = pygame.transform.scale(pygame.image.load(settings["BULLET_IMAGE"]),(settings["BULLET_WIDTH"],settings["BULLET_HEIGHT"]))
+    imagen_vault = pygame.transform.scale(pygame.image.load(settings["VAULT_IMAGE"]),(settings["VAULT_WIDTH"],settings["VAULT_HEIGHT"]))
+    imagen_fondo = pygame.transform.scale(pygame.image.load(settings["BACKGROUND_IMAGE"]), settings["SIZE_SCREEN"])
+
+    #cargo sonidos
+    gun_sound = pygame.mixer.Sound(settings["GUN_SOUND"])
+    impact_player_sound = pygame.mixer.Sound(settings["IMPACT_PLAYER_SOUND"])
+    impact_zombie_sound = pygame.mixer.Sound(settings["IMPACT_ZOMBIE_SOUND"])
+    vault_sound = pygame.mixer.Sound(settings["VAULT_SOUND"])
+
     is_running = True
     clock = pygame.time.Clock()
     NEWROUNDEVENT = USEREVENT + 1
     NEWVAULTEVENT = USEREVENT + 2
     pygame.time.set_timer(NEWVAULTEVENT, settings["VAULT_TIME"])
     ENDVAULTEVENT = USEREVENT + 3
-    player = create_player(settings)
+    player = create_player(settings,imagen_player)
     zombie_list = []
     vault_list = []
     bullet_list = []
     score = 0
     ronda = 1
     vidas = settings["LIFES"]
-    load_zombie_list(settings,zombie_list,settings["CANT_ZOMBIES"])
+    load_zombie_list(settings,zombie_list,settings["CANT_ZOMBIES"],imagen_zombie)
 
     # configuro direcciones
     move_left = False
@@ -29,9 +42,9 @@ def game(SCREEN,FONT,settings,scores):
     vault_bullet = False
 
     # cargo musica
-    # pygame.mixer.music.load("path del archivo")
-    # pygame.mixer.music.set_volume(0 a 1)
-    # pygame.mixer.music.play()
+    pygame.mixer.music.load(settings["SUSPENSE_MUSIC"])
+    pygame.mixer.music.set_volume(0.7)
+    pygame.mixer.music.play(-1)
     playing_music = True
 
     # bucle de juego
@@ -63,6 +76,7 @@ def game(SCREEN,FONT,settings,scores):
                     else:
                         pygame.mixer.music.unpause()
                     playing_music = not playing_music
+
                 if event.key == pygame.K_p:
                     show_text(SCREEN,settings["CENTER_SCREEN"],f"PAUSA",FONT,settings["RED"])
                     pygame.display.flip()
@@ -81,25 +95,26 @@ def game(SCREEN,FONT,settings,scores):
             if event.type == MOUSEBUTTONDOWN:
                 if event.button == 1:
                     if vault_bullet:
-                        new_vault_bullets = create_vault_bullet(settings,player["rect"].center,event.pos)
+                        gun_sound.play()
+                        new_vault_bullets = create_vault_bullet(settings,player["rect"].center,event.pos,imagen_bullet)
                         bullet_list.append(new_vault_bullets[0])
                         bullet_list.append(new_vault_bullets[1])
                         bullet_list.append(new_vault_bullets[2])
                     else:
-                        new_bullet = create_bullet(settings,player["rect"].center,event.pos)
+                        gun_sound.play()
+                        new_bullet = create_bullet(settings,player["rect"].center,event.pos,imagen_bullet)
                         bullet_list.append(new_bullet)
 
             if event.type == NEWROUNDEVENT:
-                load_zombie_list(settings,zombie_list, settings["CANT_ZOMBIES"] + ronda)
+                load_zombie_list(settings,zombie_list, settings["CANT_ZOMBIES"] + ronda,imagen_zombie)
 
             if event.type == NEWVAULTEVENT:
-                new_vault = create_vault(settings)
+                new_vault = create_vault(settings,imagen_vault)
                 vault_list.append(new_vault)
 
             if event.type == ENDVAULTEVENT:
                 vault_bullet = False
 
-        # actualizar movimiento
         if move_left and player["rect"].left > 0:
             player["rect"].x -= settings["PLAYER_SPEED"]
             if player["rect"].left < 0:
@@ -123,6 +138,7 @@ def game(SCREEN,FONT,settings,scores):
             zombie["rect"].move_ip(direccion[0], direccion[1])
             # analizo colisiones
             if detectar_colisiones_circulos(zombie["rect"], player["rect"]):
+                impact_player_sound.play()
                 zombie_list.remove(zombie)
                 vidas -= 1
                 vidas_text = FONT.render(f"Vidas: {vidas}",True,settings["WHITE"],None)
@@ -130,13 +146,17 @@ def game(SCREEN,FONT,settings,scores):
                         ronda += 1
                         pygame.time.set_timer(NEWROUNDEVENT, settings["ROUND_START_TIME"], 1)
             if vidas == 0:
-                game_over(SCREEN,FONT,scores,settings,score)
+                pygame.mixer.music.fadeout(2000)
+                game_over(SCREEN,TITLE_FONT,FONT,scores,settings,score)
         
         # recorro una copia de la lista de balas
         for bullet in bullet_list[:]:
             bullet["rect"].move_ip(bullet["direc"][0],bullet["direc"][1])
+            if bullet["rect"].right > settings["WIDTH"] or bullet["rect"].left < 0 or bullet["rect"].bottom > settings["HEIGHT"] or bullet["rect"].top < 0:
+                bullet_list.remove(bullet)
             for zombie in zombie_list[:]:
                 if detectar_colisiones_circulos(zombie["rect"], bullet["rect"]):
+                    impact_zombie_sound.play()
                     zombie_list.remove(zombie)
                     score += 1
                     if len(zombie_list) == 0:
@@ -146,21 +166,23 @@ def game(SCREEN,FONT,settings,scores):
         # recorro una copia de la lista de vaults
         for vault in vault_list[:]:
             if detectar_colisiones_circulos(vault["rect"], player["rect"]):
+                vault_sound.play()
                 vault_bullet = True
                 pygame.time.set_timer(ENDVAULTEVENT, settings["VAULT_DURATION"],1)
                 vault_list.remove(vault)                                   
         
-        # dibujar pantalla
-        SCREEN.fill(settings["BLACK"])
-        # SCREEN.blit(imagen_fondo,ORIGIN)
+        mouse_pos = pygame.mouse.get_pos()
+        imagen_player_rotada = rotar_pos(player,mouse_pos)
 
-        # los rectangulos se dibujan, las superficies se blitean
-        # SCREEN.blit(block["img"], block["rect"])
-        pygame.draw.rect(SCREEN, player["color"], player["rect"], player["borde"],player["radio"])
-        
+        for zombie in zombie_list:
+            zombie["imagen_rotada"] = rotar_pos(zombie,player["rect"].center)
+
+        # dibujar pantalla
+        SCREEN.blit(imagen_fondo,settings["ORIGIN"])
+        SCREEN.blit(imagen_player_rotada, imagen_player_rotada.get_rect(center=player["rect"].center))   
         for zombie in zombie_list:
             if zombie["img"]:
-                SCREEN.blit(zombie["img"], zombie["rect"])
+                SCREEN.blit(zombie["imagen_rotada"],zombie["imagen_rotada"].get_rect(center=zombie["rect"].center))
             else:
                 pygame.draw.rect(SCREEN, zombie["color"], zombie["rect"], border_radius=zombie["radio"])
         for bullet in bullet_list:
@@ -175,9 +197,10 @@ def game(SCREEN,FONT,settings,scores):
             else:
                 pygame.draw.rect(SCREEN, vault["color"], vault["rect"], border_radius=vault["radio"])
 
-        show_text(SCREEN,(90,30),f"Ronda: {ronda}",FONT,settings["WHITE"])
-        show_text(SCREEN,(settings["WIDTH"]//2,30),f"Score: {score}",FONT,settings["WHITE"])
-        show_text(SCREEN,(settings["WIDTH"]-90,30),f"Vidas: {vidas}",FONT,settings["WHITE"])
+        show_text(SCREEN,(90,30),f"Round {ronda}",FONT,settings["WHITE"])
+        show_text(SCREEN,(settings["WIDTH"]//2,30),f"Score {score}",FONT,settings["WHITE"])
+        show_text(SCREEN,(settings["WIDTH"]-90,30),f"Lifes {vidas}",FONT,settings["WHITE"])
 
         # actualizar pantalla
         pygame.display.flip()
+
