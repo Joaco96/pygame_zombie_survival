@@ -12,6 +12,7 @@ def game(SCREEN,TITLE_FONT,FONT,settings,scores):
     imagen_bullet = pygame.transform.scale(pygame.image.load(settings["BULLET_IMAGE"]),(settings["BULLET_WIDTH"],settings["BULLET_HEIGHT"]))
     imagen_vault = pygame.transform.scale(pygame.image.load(settings["VAULT_IMAGE"]),(settings["VAULT_WIDTH"],settings["VAULT_HEIGHT"]))
     imagen_fondo = pygame.transform.scale(pygame.image.load(settings["BACKGROUND_IMAGE"]), settings["SIZE_SCREEN"])
+    mira_cursor =  pygame.transform.scale(pygame.image.load(settings["MIRA_CURSOR"]),settings["AIM_SIZE"])
 
     #cargo sonidos
     gun_sound = pygame.mixer.Sound(settings["GUN_SOUND"])
@@ -43,13 +44,14 @@ def game(SCREEN,TITLE_FONT,FONT,settings,scores):
 
     # cargo musica
     pygame.mixer.music.load(settings["SUSPENSE_MUSIC"])
-    pygame.mixer.music.set_volume(0.7)
+    pygame.mixer.music.set_volume(0.5)
     pygame.mixer.music.play(-1)
     playing_music = True
 
     # bucle de juego
     while is_running:
         clock.tick(settings["FPS"])
+        pygame.mouse.set_visible(False)
 
         # analizar eventos
         for event in pygame.event.get():
@@ -200,6 +202,7 @@ def game(SCREEN,TITLE_FONT,FONT,settings,scores):
         show_text(SCREEN,(90,30),f"Round {ronda}",FONT,settings["WHITE"])
         show_text(SCREEN,(settings["WIDTH"]//2,30),f"Score {score}",FONT,settings["WHITE"])
         show_text(SCREEN,(settings["WIDTH"]-90,30),f"Lifes {vidas}",FONT,settings["WHITE"])
+        SCREEN.blit(mira_cursor,mouse_pos)
 
         # actualizar pantalla
         pygame.display.flip()
