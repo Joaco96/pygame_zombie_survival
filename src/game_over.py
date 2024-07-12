@@ -7,11 +7,15 @@ from utils import *
 from creation import *
 from read_json import *
 
-def game_over(SCREEN,TITLE_FONT,FONT,scores,settings,score):
+def game_over(SCREEN,TITLE_FONT,FONT,settings,score):
     is_running = True
     clock = pygame.time.Clock()
-    nombre = []
+    pygame.mouse.set_visible(True)
+
+    # cargo imagenes
     imagen_fondo = pygame.transform.scale(pygame.image.load(settings["LEADERBOARD_IMAGE"]), settings["SIZE_SCREEN"])
+    
+    nombre = []
 
     # bucle de pantalla
     while is_running:

@@ -5,7 +5,11 @@ from collissions import *
 from pygame.locals import *
 from game_over import *
 
-def game(SCREEN,TITLE_FONT,FONT,settings,scores):
+def game(SCREEN,TITLE_FONT,FONT,settings):
+    is_running = True
+    clock = pygame.time.Clock()
+    pygame.mouse.set_visible(False)
+
     # cargo imagenes
     imagen_player = pygame.transform.scale(pygame.image.load(settings["PLAYER_IMAGE"]),(settings["PLAYER_WIDTH"],settings["PLAYER_HEIGHT"]))
     imagen_zombie = pygame.transform.scale(pygame.image.load(settings["ZOMBIE_IMAGE"]),(settings["ZOMBIE_WIDTH"],settings["ZOMBIE_HEIGHT"]))
@@ -18,10 +22,14 @@ def game(SCREEN,TITLE_FONT,FONT,settings,scores):
     gun_sound = pygame.mixer.Sound(settings["GUN_SOUND"])
     impact_player_sound = pygame.mixer.Sound(settings["IMPACT_PLAYER_SOUND"])
     impact_zombie_sound = pygame.mixer.Sound(settings["IMPACT_ZOMBIE_SOUND"])
-    vault_sound = pygame.mixer.Sound(settings["VAULT_SOUND"])
+    vault_sound = pygame.mixer.Sound(settings["VAULT_SOUND"])    
 
-    is_running = True
-    clock = pygame.time.Clock()
+    # cargo musica
+    pygame.mixer.music.load(settings["SUSPENSE_MUSIC"])
+    pygame.mixer.music.set_volume(0.5)
+    pygame.mixer.music.play(-1)
+    playing_music = True
+
     NEWROUNDEVENT = USEREVENT + 1
     NEWVAULTEVENT = USEREVENT + 2
     pygame.time.set_timer(NEWVAULTEVENT, settings["VAULT_TIME"])
@@ -42,16 +50,9 @@ def game(SCREEN,TITLE_FONT,FONT,settings,scores):
     move_down = False
     vault_bullet = False
 
-    # cargo musica
-    pygame.mixer.music.load(settings["SUSPENSE_MUSIC"])
-    pygame.mixer.music.set_volume(0.5)
-    pygame.mixer.music.play(-1)
-    playing_music = True
-
     # bucle de juego
     while is_running:
         clock.tick(settings["FPS"])
-        pygame.mouse.set_visible(False)
 
         # analizar eventos
         for event in pygame.event.get():
@@ -149,7 +150,7 @@ def game(SCREEN,TITLE_FONT,FONT,settings,scores):
                         pygame.time.set_timer(NEWROUNDEVENT, settings["ROUND_START_TIME"], 1)
             if vidas == 0:
                 pygame.mixer.music.fadeout(2000)
-                game_over(SCREEN,TITLE_FONT,FONT,scores,settings,score)
+                game_over(SCREEN,TITLE_FONT,FONT,settings,score)
         
         # recorro una copia de la lista de balas
         for bullet in bullet_list[:]:
@@ -160,6 +161,10 @@ def game(SCREEN,TITLE_FONT,FONT,settings,scores):
                 if detectar_colisiones_circulos(zombie["rect"], bullet["rect"]):
                     impact_zombie_sound.play()
                     zombie_list.remove(zombie)
+                    try:
+                        bullet_list.remove(bullet)
+                    except ValueError:
+                        print("Bala no se encuentra en la lista")
                     score += 1
                     if len(zombie_list) == 0:
                         ronda += 1

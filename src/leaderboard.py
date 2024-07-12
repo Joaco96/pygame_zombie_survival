@@ -8,6 +8,9 @@ from read_json import *
 def leaderboard(SCREEN,TITLE_FONT,FONT,settings,current_score=None):
     is_running = True
     clock = pygame.time.Clock()
+    pygame.mouse.set_visible(True)
+
+    #cargo imagenes
     imagen_fondo = pygame.transform.scale(pygame.image.load(settings["LEADERBOARD_IMAGE"]), settings["SIZE_SCREEN"])
     
     # importo puntajes desde json
@@ -21,7 +24,7 @@ def leaderboard(SCREEN,TITLE_FONT,FONT,settings,current_score=None):
         scores = sorted_map(lambda a,b: a[1] < b[1],json["scores"])
     else: scores = json["scores"]
     
-    # bucle de juego
+    # bucle de pantalla
     while is_running:
         clock.tick(settings["FPS"])
         # analizar eventos
