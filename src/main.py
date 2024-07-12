@@ -31,10 +31,13 @@ pygame.display.set_icon(icono)
 
 def main():
     is_running = True
+    clock = pygame.time.Clock()
     imagen_fondo = pygame.transform.scale(pygame.image.load(settings["MENU_IMAGE"]), settings["SIZE_SCREEN"])
     pygame.mouse.set_visible(True)
 
     while is_running:
+        clock.tick(settings["FPS"])
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminar()

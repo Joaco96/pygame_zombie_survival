@@ -6,6 +6,9 @@ import sys
 def controls(SCREEN,TITLE_FONT,FONT,settings):
     is_running = True
     clock = pygame.time.Clock()
+    pygame.mouse.set_visible(True)
+
+    # cargo imagenes
     imagen_fondo = pygame.transform.scale(pygame.image.load(settings["CONTROLS_IMAGE"]), settings["SIZE_SCREEN"])
 
     # bucle de juego
