@@ -128,6 +128,7 @@ def wait_user(tecla: int) -> None:
         tecla (int): Tecla especificada para desparalizar el programa.
     """
     flag_start = True
+    pygame.mixer.music.pause()
     while flag_start:
       for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -135,6 +136,7 @@ def wait_user(tecla: int) -> None:
           sys.exit()
         if event.type == pygame.KEYDOWN:
           if event.key == tecla:
+            pygame.mixer.music.unpause()
             flag_start = False
 
 def terminar():

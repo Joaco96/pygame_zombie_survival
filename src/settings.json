@@ -19,7 +19,7 @@
     "BLOCK_HEIGHT": 50,
     "PLAYER_WIDTH": 80,
     "PLAYER_HEIGHT": 55,
-    "PLAYER_SPEED": 3,
+    "PLAYER_SPEED": 2,
     "VAULT_WIDTH": 50,
     "VAULT_HEIGHT": 40,
     "ZOMBIE_WIDTH": 50,
